@@ -5,6 +5,10 @@ Zig é uma linguagem de propósito geral que promete ser mais rápida e mais fi�
 
 Quero aqui gerar uma base de conhecimento sobre o Zig, a fim de entender melhor como a linguagem funciona e como Zig pode ser usada para construir soluções de baixo nível, onde, na maioria dos casos, tais não devem falhar.
 
+## Como usar
+
+Insira as fontes no Gemini Notebook, faça as queries sugeridas e comece sua jornada de aprendizado sobre Zig.
+
 ## Principais fontes de dados
 
 -> https://ziglang.org/documentation/master/
