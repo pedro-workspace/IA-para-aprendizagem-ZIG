@@ -8,11 +8,17 @@ Quero aqui gerar uma base de conhecimento sobre o Zig, a fim de entender melhor 
 ## Principais fontes de dados
 
 -> https://ziglang.org/documentation/master/
+
 -> https://www.youtube.com/watch?v=iqddnwKF8HQ&t=3057s
+
 -> https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://repositorio-aberto.up.pt/bitstream/10216/111643/2/261923.pdf&ved=2ahUKEwjiya31uNKWAxXV3wIHHc5NJV0QFnoECCYQAQ&usg=AOvVaw1BxTVSoH66bHGt-C9xuObQ
 
 ## Perguntas estratégicas
+
 -> Me dê um roadmap para aprender Zig e usá-lo em aplicações de baixo nível (system-level design).
+
 -> Quero uma explicação detalhada sobre Zig funcionando por baixo dos panos e como pode ser melhor ou pior em relação a outras linguagens de programação de propósito geral com capacidade de atuar na construção de sistemas operacionais. Responda como um CTO de uma empresa que cura sistemas operacionais.
+
 -> Como um consultor educacional experiente, me indique 5 projetos que vão me ajudar a desenvolver minhas habilidades com Zig.
+
 -> Ainda como consultor educacional experiente, forneça para mim: resumos estruturados do assunto; um glossário com os principais conceitos aprendidos; e um conjunto de prompts reutilizáveis que possam apoiar futuras revisões sobre o tema.
