@@ -9,7 +9,7 @@ Quero aqui gerar uma base de conhecimento sobre o Zig, a fim de entender melhor 
 
 -> https://ziglang.org/documentation/master/
 
--> https://www.youtube.com/watch?v=iqddnwKF8HQ&t=3057s
+-> https://www.youtube.com/watch?v=iqddnwKF8HQ
 
 -> https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://repositorio-aberto.up.pt/bitstream/10216/111643/2/261923.pdf&ved=2ahUKEwjiya31uNKWAxXV3wIHHc5NJV0QFnoECCYQAQ&usg=AOvVaw1BxTVSoH66bHGt-C9xuObQ
 
