@@ -1,0 +1,107 @@
+# Portfólio de Aprendizado Zig: 5 Projetos de Engenharia de Sistemas (Low-Level Design)
+
+Como consultor educacional, meu objetivo é transformar a teoria da especificação do Zig em competência prática de engenharia de software de baixo nível. Para dominar o Zig, você precisa experimentar os seus diferenciais de design: ausência de alocação implícita, programação em tempo de compilação (`comptime`), controle absoluto de layout de memória e interoperabilidade nativa com C.
+
+Este guia apresenta **5 projetos práticos de complexidade progressiva**. Cada projeto foi estruturado para consolidar tópicos específicos e simular os desafios enfrentados por grandes projetos do ecossistema, como o banco de dados *Tiger Beetle* [513] e o motor *Bun* [514].
+
+---
+
+## Projeto 1: Implementação de um Alocador de Arena (`ArenaAllocator`) do Zero
+* **Foco:** Gerenciamento Manual de Memória, Alinhamento e Ponteiros.
+* **Complexidade:** Iniciante-Intermediário.
+
+### O Desafio Pedagógico
+Por convenção, o Zig não fornece um alocador global padrão [441]. Qualquer função ou estrutura de dados que necessite de alocação de memória dinâmica deve receber explicitamente um parâmetro do tipo `Allocator` [441]. Para dominar isso, seu primeiro projeto será implementar o seu próprio alocador do tipo Arena (`ArenaAllocator`) de forma manual [444, 445].
+
+### O que você vai construir
+Uma estrutura que gerencia uma região contígua de memória pré-alocada (um *buffer* de bytes) [442]. O alocador deve:
+1. Receber um bloco contíguo de memória bruta usando ponteiros para múltiplos itens (`[*]u8`) [77, 225].
+2. Fornecer uma função de alocação (`alloc`) que avança um ponteiro interno conforme o tamanho solicitado, respeitando o alinhamento estrito do tipo de dado pedido (utilizando `@alignOf` [87, 301] e inserindo verificações com `@alignCast` [90, 300]).
+3. Implementar um método `deinit` que invalida e libera toda a memória acumulada de uma só vez [445].
+
+### Recursos do Zig para Praticar
+* Ponteiros simples (`*T`), múltiplos itens (`[*]T`) [77] e fatias (`[]T`) [78].
+* Alinhamento estrito (`align`) e coerção de alinhamentos [87, 88].
+* Tratamento explícito de falhas de memória usando o erro padrão `error.OutOfMemory` [448].
+
+---
+
+## Projeto 2: Parser de Configurações Estáticas via Metaprogramação (`comptime` ZON Parser)
+* **Foco:** Execução em Tempo de Compilação (`comptime`) e Reflexão de Tipos.
+* **Complexidade:** Intermediário.
+
+### O Desafio Pedagógico
+A metaprogramação no Zig não se apoia em sistemas de macros complexos ou pré-processadores. Em vez disso, ela utiliza a própria linguagem Zig executada em tempo de compilação (`comptime`) [292]. Este projeto ajudará você a entender como o compilador pode processar informações estáticas antes mesmo da execução do programa [274, 275].
+
+### O que você vai construir
+Um analisador de formato de configuração simplificado (baseado no formato ZON do Zig [335]). O parser deve:
+1. Receber uma string de configuração contendo pares de chave-valor em tempo de compilação [274].
+2. Utilizar funções avaliadas em `comptime` para analisar os dados lexicais e sintáticos da string [275].
+3. Preencher uma estrutura de dados de destino (`struct`) gerada dinamicamente com base nas propriedades descritas no arquivo de texto [284], gerando erros de compilação personalizados com `@compileError` [162, 290] se houver campos inválidos ou tipos incompatíveis.
+
+### Recursos do Zig para Praticar
+* Blocos e variáveis avaliados em tempo de compilação (`comptime`) [51, 274].
+* Reflexão de tipos e análise de metadados com `@typeInfo` [190, 387] e `@TypeOf` [190, 388].
+* Geração de estruturas anônimas e tipos dinâmicos [122, 124, 284].
+
+---
+
+## Projeto 3: Banco de Dados de Transações Baseado em Pré-Alocação Estática (TigerBeetle-lite)
+* **Foco:** Sistemas de Baixa Latência e Determinismo de Memória.
+* **Complexidade:** Intermediário-Avançado.
+
+### O Desafio Pedagógico
+Sistemas financeiros de ultra-alta performance, como o banco de dados *Tiger Beetle* escrito em Zig, garantem latências totalmente previsíveis pré-alocando todos os recursos na inicialização do sistema [513, 514]. Uma vez iniciado, o programa nunca mais realiza alocações dinâmicas de memória em tempo de execução [513, 514].
+
+### O que você vai construir
+Um motor de transações financeiras simplificado (OLTP) de alta performance. O sistema deve:
+1. Instanciar um vetor de tamanho conhecido em tempo de compilação utilizando inicialização estática [67, 176].
+2. Criar uma estrutura de dados persistente (tabela de contas e saldos) utilizando `FixedBufferAllocator` [442] ou um buffer estático [443], garantindo que toda a operação ocorra sem nenhuma chamada adicional ao sistema operacional para requisitar memória.
+3. Processar lotes de transações garantindo segurança física contra estouro de limites através do uso de fatias (*slices*) com checagem automática nativa (`bounds checking`) [80, 94].
+
+### Recursos do Zig para Praticar
+* Vetores estáticos terminados em sentinela (`[N:x]T`) [69] e fatias de memória (`[]T`) [78].
+* Evitar alocações dinâmicas em runtime e tratamento robusto de falhas estáticas [448, 513].
+* Testes unitários nativos integrados ao código utilizando `zig test` [32, 33].
+
+---
+
+## Projeto 4: Driver de Periférico MMIO Virtual com Escrita Volátil
+* **Foco:** Manipulação de Hardware, packed structs e Volatilidade.
+* **Complexidade:** Avançado.
+
+### O Desafio Pedagógico
+No desenvolvimento de sistemas embarcados e kernels de sistemas operacionais, a interação com o hardware ocorre frequentemente mapeando registradores físicos diretamente na memória (MMIO) [86]. Compiladores de propósito geral tendem a otimizar leituras e escritas repetidas na mesma posição de memória [86]. Você aprenderá a inibir essas otimizações e a mapear bits de forma exata na memória [86, 108].
+
+### O que você vai construir
+Um simulador de driver para um controlador GPIO virtual. O driver deve:
+1. Definir o mapa de registradores utilizando uma estrutura compactada (`packed struct`) [108, 122]. Cada campo deve corresponder exatamente a um bit ou grupo de bits específico no hardware [109].
+2. Mapear essa estrutura sobre um endereço de memória virtual fornecido por meio de uma conversão explícita com `@ptrFromInt` [82, 353].
+3. Realizar leituras e escritas utilizando ponteiros qualificados como `volatile` [86], garantindo que o compilador gere as instruções exatas na ordem descrita no código [86].
+4. Aplicar o padrão de design correto para MMIO no Zig: construir primeiro o estado completo da estrutura em memória e depois gravá-lo de uma vez no registrador volátil [121].
+
+### Recursos do Zig para Praticar
+* Estruturas compactadas bit-a-bit (`packed struct`) e tipos de união compactados (`packed union`) [108, 109, 144].
+* Ponteiros voláteis (`*volatile T`) para MMIO [86, 121].
+* Conversões seguras entre inteiros e ponteiros físicos com `@ptrFromInt` [82, 353] e `@intFromPtr` [82, 342].
+
+---
+
+## Projeto 5: Utilitário CLI de Monitoramento de Rede com Interoperabilidade C Nativa
+* **Foco:** Integração com Código C Legado e Chamadas de Sistema (Syscalls).
+* **Complexidade:** Avançado.
+
+### O Desafio Pedagógico
+O Zig foi desenhado para interagir de forma transparente e performática com a vasta biblioteca de software escrita em C [466]. Ele permite traduzir cabeçalhos automaticamente [467], compilar arquivos C nativamente e expor funções Zig seguindo a C ABI [45, 187, 495].
+
+### O que você vai construir
+Um utilitário de monitoramento de tráfego de rede de baixo nível que utiliza a biblioteca nativa `libpcap` escrita em C. O projeto deve:
+1. Utilizar o compilador do Zig como o seu compilador C principal (`zigcc`) [514], integrando cabeçalhos C legados.
+2. Usar o recurso `zig translate-c` [467] ou importar diretamente o cabeçalho C via `@cImport` para expor as funções de captura de pacotes na rede.
+3. Declarar callbacks e assinaturas de funções com a chamada de convenção compatível com C (`extern` [187, 495] ou `export` [327, 495]).
+4. Gerenciar strings e ponteiros C (`[*c]const u8`) [471] convertendo-os de forma segura para os tipos idiomáticos e fatias de bytes nativos do Zig [22, 225].
+
+### Recursos do Zig para Praticar
+* Interoperabilidade nativa com cabeçalhos C (`@import("std").c` e `@cImport`) [20, 466].
+* Tratamento de ponteiros de C (`[*c]T`) [471] e mapeamento para tipos compatíveis com C ABI (`c_int`, `c_char`) [21, 466].
+* Uso de tipos opacos (`opaque {}`) para representar estruturas C cujo layout interno é ocultado [146, 470].
