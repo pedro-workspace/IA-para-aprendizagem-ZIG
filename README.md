@@ -22,3 +22,6 @@ Quero aqui gerar uma base de conhecimento sobre o Zig, a fim de entender melhor 
 -> Como um consultor educacional experiente, me indique 5 projetos que vão me ajudar a desenvolver minhas habilidades com Zig.
 
 -> Ainda como consultor educacional experiente, forneça para mim: resumos estruturados do assunto; um glossário com os principais conceitos aprendidos; e um conjunto de prompts reutilizáveis que possam apoiar futuras revisões sobre o tema.
+
+
+Em todas as etapas podem ser usados ajustes de saída, indicando que tipo de resposta é desejada pelo usuário.
